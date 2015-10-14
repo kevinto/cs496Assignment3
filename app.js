@@ -70,23 +70,23 @@ app.use(function(err, req, res, next) {
 // }
 
 // Set up mongodb
-// var mongoose = require('mongoose');
-// var uriUtil = require('mongodb-uri');
-// var options = { server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }, 
-//                 replset: { socketOptions: { keepAlive: 1, connectTimeoutMS : 30000 } } };  
-// if (process.env.MONGOLAB_URI) {
-//   var rtg   = require("url").parse(process.env.MONGOLAB_URI);
-//   GLOBAL.redis = require("redis").createClient(rtg.port, rtg.hostname);
+var mongoose = require ("mongoose"); // The reason for this demo.
 
-//   GLOBAL.redis.auth(rtg.auth.split(":")[1]);
-  
-//   console.log("Successful init of redis");
-// }
-// else {
-//   console.log("Running redis in development");
-//   GLOBAL.redis = require("redis").createClient();
-// }
+// Here we find an appropriate database to connect to, defaulting to
+// localhost if we don't find one.
+var uristring =
+process.env.MONGOLAB_URI ||
+process.env.MONGOHQ_URL ||
+'mongodb://localhost/HelloMongoose';
 
+// Makes connection asynchronously.  Mongoose will queue up database
+// operations and release them when the connection is complete.
+mongoose.connect(uristring, function (err, res) {
+  if (err) {
+  console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+  } else {
+  console.log ('Succeeded connected to: ' + uristring);
+  }
+});
 
-// Set up MongoDb
 module.exports = app;
