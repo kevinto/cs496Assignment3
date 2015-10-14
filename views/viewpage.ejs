@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><a href="/view">Currently in View Mode</a></h1>
+    <h3><a href="/">Switch to Edit Mode</a></h3>
+    <form method="post">
+      <legend>Feel free to input data:</legend>
+      <input type="hidden" name="action" value="add_form_info">
+      <fieldset>
+        <legend>Are you a person?</legend>
+        <% if (typeof(isPerson) == 'undefined' || isPerson == '') { %>
+          <input type="checkbox" name="isPerson" value="checked" disabled="disabled"/> CheckBox
+        <% } else { %>
+          <input type="checkbox" name="isPerson" value=<%= isPerson %> checked="true"  disabled="disabled"/> CheckBox
+        <% } %>
+        <br/>
+      </fieldset>
+      <fieldset>
+        <legend>What is your favorite operating system?</legend>
+        <% if (typeof(OS) == 'undefined' || OS == '') { %>
+          <input type="radio" name="OS" disabled="disabled" value="mac" />Mac<br/>
+          <input type="radio" name="OS" disabled="disabled" value="pc" />Windows<br/>
+          <input type="radio" name="OS" disabled="disabled" value="linux" />Linux<br/>
+        <% } else if (OS == "mac") { %>
+          <input type="radio" name="OS" disabled="disabled" value="mac"  checked/>Mac<br/>
+          <input type="radio" name="OS" disabled="disabled" value="pc" />Windows<br/>
+          <input type="radio" name="OS" disabled="disabled" value="linux" />Linux<br/>
+        <% } else if (OS == "pc") { %>
+          <input type="radio" name="OS" disabled="disabled" value="mac" />Mac<br/>
+          <input type="radio" name="OS" disabled="disabled" value="pc"  checked/>Windows<br/>
+          <input type="radio" name="OS" disabled="disabled" value="linux" />Linux<br/>
+        <% } else if (OS == "linux") { %>
+          <input type="radio" name="OS" disabled="disabled" value="mac" />Mac<br/>
+          <input type="radio" name="OS" disabled="disabled" value="pc"  />Windows<br/>
+          <input type="radio" name="OS" disabled="disabled" value="linux"  checked/>Linux<br/>
+        <% } else { %>
+          <input type="radio" name="OS" disabled="disabled" value="mac" />Mac<br/>
+          <input type="radio" name="OS" disabled="disabled" value="pc" />Windows<br/>
+          <input type="radio" name="OS" disabled="disabled" value="linux" />Linux<br/>
+        <% } %>
+      </fieldset>
+      <fieldset>
+        <legend>Enter a sample email:</legend>
+        <% if (typeof(email) == 'undefined' || email == '') { %>
+          <input type="email" name="email" disabled="disabled">
+        <% } else { %>
+          <input type="email" name="email" disabled="disabled" value=<%= email %>>
+        <% } %>
+        <br/>
+      </fieldset>
+      <fieldset>
+        <legend>Enter a number:</legend>
+        <% if (typeof(number) == 'undefined' || number == '') { %>
+          <input type="number" name="number" disabled="disabled">
+        <% } else { %>
+          <input type="number" name="number" disabled="disabled" value=<%= number %>>
+        <% } %>
+        <br/>
+      </fieldset>
+      <fieldset>
+        <legend>Enter a date:</legend>
+        <% if (typeof(date) == 'undefined' || date == '') { %>
+          <input type="date" name="date" disabled="disabled">
+        <% } else { %>
+          <input type="date" name="date" disabled="disabled" value=<%= date %>>
+        <% } %>
+        <br/>
+      </fieldset>
+      <input type="submit" value="Submit now" disabled="disabled"/>
+    </form>
+  </body>
+</html>
