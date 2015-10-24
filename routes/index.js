@@ -1,27 +1,25 @@
 var express = require('express');
 var router = express.Router();
 var user = require('../model/user.js');
-// var view = require('../model/view.js');
 
-
-// GET call for users
+// GET call to get all users 
 router.get('/users', function(req, res, next) {
   user.GetUsers(req, res, next);
 });
 
-// PUT call for users
+// PUT call to replace a user by ID or to add a new user
 router.put('/user/:id?', function(req, res, next) {
   user.PutUser(req, res, next);
 });
 
-// // POST call for edit page
-// router.post('/', function(req, res, next) {
-//   edit.PostEditPage(req, res, next);
-// });
+// Get call to get a specific user 
+router.get('/user/:id', function(req, res, next) {
+  user.GetUser(req, res, next);
+});
 
-// // GET call for view page
-// router.get('/view', function(req, res, next) {
-//   view.GetView(req, res, next);
-// });
+// POST call to update or add a user without an ID
+router.post('/user', function(req, res, next) {
+  user.PostUser(req, res, next);
+});
 
 module.exports = router;

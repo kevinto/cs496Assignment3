@@ -37,50 +37,25 @@ module.exports = {
   GetUsers: function(req, res, next) {
     UserModel.find({}, function(err, users) {
       if (!err) {
+        res.send(users);
+        console.log("GET USERS COMPLETED");
+      }
+      else {
+        console.log(err);
+      }
+    });
+  },
+  
+  GetUser: function(req, res, next) {
+    UserModel.find({ '_id': req.params.id}, function(err, users) {
+      if (!err) {
         res.send(users)
-        console.log("GET COMPLETED");
+        console.log("GET USER COMPLETED");
       }
       else {
         console.log(err);
       }
     })
-  },
-
-  PostEditPage: function(req, res, next) {
-    var action = req.body.action;
-    if (typeof(action) != "undefined" && action == "add_form_info") {
-      var isPerson = typeof(req.body.isPerson) == "undefined" ? "" : req.body.isPerson;
-      var OS = typeof(req.body.OS) == "undefined" ? "" : req.body.OS;
-      var email = typeof(req.body.email) == "undefined" ? "" : req.body.email;
-      var number = typeof(req.body.number) == "undefined" ? "" : req.body.number;
-      var date = typeof(req.body.date) == "undefined" ? "" : req.body.date;
-
-      var keys = [];
-      var values = [];
-
-      keys.push("isPerson");
-      keys.push("OS");
-      keys.push("email");
-      keys.push("number");
-      keys.push("date");
-
-      values.push(isPerson);
-      values.push(OS);
-      values.push(email);
-      values.push(number);
-      values.push(date);
-
-      // Add fields to the database 
-      var result = redisHelper.msetIntoRedis(keys, values, res, ShowEdit);
-      if (result == false) {
-        console.log("Error occurred on redis insert");
-      }
-    }
-    else {
-      res.render('editpage', {
-        title: title
-      });
-    }
   },
 
   PutUser: function(req, res, next) {
@@ -117,6 +92,26 @@ module.exports = {
         }
       });
     }
+  },
+  
+  PostUser: function(req, res, next) {
+    var newUser = new UserModel(req.body);
+    var upsertData = newUser.toObject();
+    delete upsertData._id;
+    
+    if (newUser.userId == null || newUser.email == null || newUser.firstName == null || newUser.lastName == null)
+    {
+      res.send("Post did not update or add a user because of missing fields. The required fields are: userId, email, firstName, lastName");
+    }
+    
+    UserModel.findOneAndUpdate({ userId: newUser.userId, email: newUser.email }, upsertData, {upsert: true}, function(err) {
+      if (!err) {
+        res.send("POST COMPLETED");
+      }
+      else {
+        console.log(err);
+      }
+    });
   }
 };
 
