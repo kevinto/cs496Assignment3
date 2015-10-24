@@ -54,7 +54,7 @@ app.use(function(err, req, res, next) {
 });
 
 // Set up mongodb
-var mongoose = require("mongoose"); // The reason for this demo.
+var mongoose = require("mongoose");
 
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
@@ -72,53 +72,6 @@ mongoose.connect(uristring, function(err, res) {
   else {
     console.log('Succeeded connected to: ' + uristring);
   }
-});
-
-// Test Mongoose code
-var UserSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true
-  },
-  firstName: {
-    type: String,
-    required: true
-  },
-  lastName: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true
-  },
-  stockAlerts: {
-    type: Array,
-    "default": []
-  }
-});
-
-// Test create new user and save.
-var PUser = mongoose.model('users', UserSchema);
-var johndoe = new PUser({
-  userId: "test1",
-  firstName: "k1",
-  lastName: "t1",
-  email: "bah",
-  stockAlerts: [{
-    "stockTickerSymbol": "GOOG",
-    "amountOwned": 12,
-    "sellPrice": 800,
-    "buyPrice": 500
-  }, {
-    "stockTickerSymbol": "GOOG",
-    "amountOwned": 13,
-    "sellPrice": 800,
-    "buyPrice": 500
-  }]
-});
-johndoe.save(function(err) {
-  if (err) console.log('Error on mongo save')
 });
 
 module.exports = app;
