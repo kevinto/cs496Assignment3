@@ -22,4 +22,9 @@ router.post('/user', function(req, res, next) {
   user.PostUser(req, res, next);
 });
 
+// DELETE call to delete a user by ID or by userId
+router.delete('/user/:id?', function(req, res, next) {
+  user.DeleteUser(req, res, next);
+});
+
 module.exports = router;

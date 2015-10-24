@@ -112,6 +112,41 @@ module.exports = {
         console.log(err);
       }
     });
+  },
+  
+  DeleteUser: function(req, res, next) {
+    var user = new UserModel(req.body);
+    if (typeof(req.params.id) == "undefined" && user.userId == null)
+    {
+      res.send("Need id in url params or userId in request body in order to delete user");
+      return;
+    }
+    
+    if (typeof(req.params.id) != "undefined")
+    {
+      // Delete by id
+      UserModel.findByIdAndRemove(req.params.id, function(err) {
+        if (!err) {
+          res.send("DELETE COMPLETED");
+          console.log("DELETE COMPLETED");
+        }
+        else {
+          console.log(err);
+        }
+      });     
+    }
+    else {
+      // Delete by userId 
+      UserModel.findOneAndRemove({ userId: user.userId }, function(err) {
+        if (!err) {
+          res.send("DELETE COMPLETED");
+          console.log("DELETE COMPLETED");
+        }
+        else {
+          console.log(err);
+        }
+      }); 
+    }
   }
 };
 
