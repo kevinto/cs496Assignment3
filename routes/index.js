@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var user = require('../model/user.js');
+var stock = require('../model/stock.js');
 
 // GET call to get all users 
 router.get('/users', function(req, res, next) {
@@ -25,6 +26,16 @@ router.post('/user', function(req, res, next) {
 // DELETE call to delete a user by ID or by userId
 router.delete('/user/:id?', function(req, res, next) {
   user.DeleteUser(req, res, next);
+});
+
+// POST call to update a specific users stocks
+router.post('/stock/', function(req, res, next) {
+  stock.UpdateUserStocks(req, res, next);
+});
+
+// DELETE call to clean up any stocks that arent monitored by users
+router.delete('/stock/', function(req, res, next) {
+  stock.CleanUpStocks(req, res, next);
 });
 
 module.exports = router;

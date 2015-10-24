@@ -14,7 +14,8 @@
     "express": "~4.13.1",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
-    "mongoose": "4.0.6"
+    "mongoose": "4.0.6",
+    "underscore-node": "0.1.2"
   },
   "engines": {
     "node": "0.12.7" 

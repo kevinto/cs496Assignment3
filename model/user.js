@@ -2,8 +2,6 @@
 // =============
 var mongoose = require("mongoose");
 
-var title = "CS496 A2 Edit Page";
-
 var UserSchema = new mongoose.Schema({
   userId: {
     type: String,
@@ -32,7 +30,6 @@ var UserSchema = new mongoose.Schema({
 });
 var UserModel = mongoose.model('users', UserSchema);
 
-
 module.exports = {
   GetUsers: function(req, res, next) {
     UserModel.find({}, function(err, users) {
@@ -58,6 +55,18 @@ module.exports = {
     })
   },
 
+  GetUserStocks: function(puserId) {
+    // Gets the stocks for a specific user
+    var promise = UserModel.find({ userId: puserId }).exec();
+    return promise;
+  },
+  
+  GetAllUserStocks: function() {
+    // Gets all the stocks used by users
+    var promise = UserModel.find({}).exec();
+    return promise;
+  },
+  
   PutUser: function(req, res, next) {
     var newUser = new UserModel(req.body);
     if (typeof(req.params.id) == "undefined") {
@@ -149,49 +158,3 @@ module.exports = {
     }
   }
 };
-
-// newUser.save(function(err) {
-      //   if (!err) {
-      //     return console.log("New User created: " + newUser.userId);
-      //   }
-      //   else {
-      //     return console.log(err);
-      //   }
-      // });
-      
-function ShowEdit(res, params) {
-  res.render('editpage', {
-    title: title,
-    isPerson: params[0],
-    OS: params[1],
-    email: params[2],
-    number: params[3],
-    date: params[4]
-  });
-}
-
-function CreateTestUser() {
-  // Test create new user and save.
-  var johndoe = new UserModel({
-    userId: "test2",
-    firstName: "k2",
-    lastName: "t2",
-    email: "bah2",
-    stockAlerts: [{
-      "stockTickerSymbol": "GOOG",
-      "amountOwned": 12,
-      "sellPrice": 800,
-      "buyPrice": 500
-    }, {
-      "stockTickerSymbol": "GOOG",
-      "amountOwned": 13,
-      "sellPrice": 800,
-      "buyPrice": 500
-    }]
-  });
-  johndoe.save(function(err) {
-    if (err) {
-      console.log(err);
-    }
-  });
-}
