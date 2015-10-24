@@ -6,7 +6,8 @@ var view = require('../model/view.js');
 
 // GET call for edit page
 router.get('/', function(req, res, next) {
-  edit.GetEditPage(req, res, next);
+  res.send("API GET call.");
+  // edit.GetEditPage(req, res, next);
 });
 
 // POST call for edit page

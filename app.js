@@ -14,11 +14,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.disable('etag');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,8 +30,6 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
-
-// error handlers
 
 // development error handler
 // will print stacktrace
@@ -55,38 +53,72 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// Set up Redis
-// if (process.env.REDISTOGO_URL) {
-//   var rtg   = require("url").parse(process.env.REDISTOGO_URL);
-//   GLOBAL.redis = require("redis").createClient(rtg.port, rtg.hostname);
-
-//   GLOBAL.redis.auth(rtg.auth.split(":")[1]);
-  
-//   console.log("Successful init of redis");
-// }
-// else {
-  // console.log("Running redis in development");
-  // GLOBAL.redis = require("redis").createClient();
-// }
-
 // Set up mongodb
-var mongoose = require ("mongoose"); // The reason for this demo.
+var mongoose = require("mongoose"); // The reason for this demo.
 
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
 var uristring =
-process.env.MONGOLAB_URI ||
-process.env.MONGOHQ_URL ||
-'mongodb://localhost/HelloMongoose';
+  process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+  'mongodb://localhost/HelloMongoose';
 
 // Makes connection asynchronously.  Mongoose will queue up database
 // operations and release them when the connection is complete.
-mongoose.connect(uristring, function (err, res) {
+mongoose.connect(uristring, function(err, res) {
   if (err) {
-  console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-  } else {
-  console.log ('Succeeded connected to: ' + uristring);
+    console.log('ERROR connecting to: ' + uristring + '. ' + err);
   }
+  else {
+    console.log('Succeeded connected to: ' + uristring);
+  }
+});
+
+// Test Mongoose code
+var UserSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true
+  },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  stockAlerts: {
+    type: Array,
+    "default": []
+  }
+});
+
+// Test create new user and save.
+var PUser = mongoose.model('users', UserSchema);
+var johndoe = new PUser({
+  userId: "test1",
+  firstName: "k1",
+  lastName: "t1",
+  email: "bah",
+  stockAlerts: [{
+    "stockTickerSymbol": "GOOG",
+    "amountOwned": 12,
+    "sellPrice": 800,
+    "buyPrice": 500
+  }, {
+    "stockTickerSymbol": "GOOG",
+    "amountOwned": 13,
+    "sellPrice": 800,
+    "buyPrice": 500
+  }]
+});
+johndoe.save(function(err) {
+  if (err) console.log('Error on mongo save')
 });
 
 module.exports = app;
