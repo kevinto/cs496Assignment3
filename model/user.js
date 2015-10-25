@@ -104,7 +104,7 @@ module.exports = {
     
     GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId, email: newUser.email }, upsertData, {upsert: true}, function(err) {
       if (!err) {
-        stock.UpdateUserStocks(req, res, next, "PUT COMPLETED");
+        stock.UpdateUserStocks(req, res, next, "POST COMPLETED");
       }
       else {
         console.log(err);
