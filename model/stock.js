@@ -29,7 +29,6 @@ module.exports = {
       res.send("userId is needed to update stocks");
     }
     else {
-      // var promise = user.GetUserStocks(bodyUserId);
       var promise = GetUserStocks(bodyUserId);
       promise.then(function(users) {
         return users[0].stockAlerts;
@@ -58,15 +57,15 @@ module.exports = {
     }
   },
   
-  CleanUpStocks: function(req, res, next) {
-    var promise = user.GetAllUserStocks();
+  CleanUpStocks: function(req, res, next, message) {
+    var promise = GetAllUserStocks();
     promise.then(function(users) {
       // Create an array of stock tickers in the database that exist for users
       var stocksTickers = [];
       users.forEach(function(user){
         user.stockAlerts.forEach(function(stockAlert) {
           stocksTickers.push(stockAlert.stockTickerSymbol);  
-        })
+        });
       });
       return stocksTickers;
     }).then(function(stockTickers) {
@@ -81,7 +80,7 @@ module.exports = {
             var dbStocks = [];
             stocks.forEach(function(stock) {
               dbStocks.push(stock.stockTickerSymbol);
-            })
+            });
             
             var stocksToDelete = _.difference(dbStocks, uniqueStocks);
             GLOBAL.StockModel.find({ 'stockTickerSymbol': { $in: stocksToDelete} }, function(err, stocks){

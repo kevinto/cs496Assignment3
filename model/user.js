@@ -55,18 +55,6 @@ module.exports = {
       }
     })
   },
-
-  GetUserStocks: function(puserId) {
-    // Gets the stocks for a specific user
-    var promise = GLOBAL.UserModel.find({ userId: puserId }).exec();
-    return promise;
-  },
-  
-  GetAllUserStocks: function() {
-    // Gets all the stocks used by users
-    var promise = GLOBAL.UserModel.find({}).exec();
-    return promise;
-  },
   
   PutUser: function(req, res, next) {
     var newUser = new GLOBAL.UserModel(req.body);
@@ -137,8 +125,8 @@ module.exports = {
       // Delete by id
       GLOBAL.UserModel.findByIdAndRemove(req.params.id, function(err) {
         if (!err) {
-          res.send("DELETE COMPLETED");
           console.log("DELETE COMPLETED");
+          stock.CleanUpStocks(req, res, next, "DELETE COMPLETED");
         }
         else {
           console.log(err);
@@ -149,8 +137,8 @@ module.exports = {
       // Delete by userId 
       GLOBAL.UserModel.findOneAndRemove({ userId: user.userId }, function(err) {
         if (!err) {
-          res.send("DELETE COMPLETED");
           console.log("DELETE COMPLETED");
+          stock.CleanUpStocks(req, res, next, "DELETE COMPLETED");
         }
         else {
           console.log(err);
