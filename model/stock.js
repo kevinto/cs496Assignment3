@@ -91,7 +91,7 @@ module.exports = {
                 sendResponse(res, err);
               }
             }).remove().exec(function() {
-              sendResponse(res, "Deleted stocks");
+              sendResponse(res, "Deleted stocks", message);
             });
           }
           else {
