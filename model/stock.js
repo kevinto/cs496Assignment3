@@ -39,6 +39,8 @@ module.exports = {
             stockTickers.push(
               {
                 "stockTickerSymbol": stock.stockTickerSymbol,
+                "stockName": "!!NeedsUpdate!! Feature not implemented",
+                "currentStockPrice": "-1"
               });
           });
           console.log(stockTickers);
