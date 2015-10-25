@@ -19,18 +19,18 @@ var StockSchema = new mongoose.Schema({
     type: Number,
   }
 });
-
-var StockModel = mongoose.model('stocks', StockSchema);
+GLOBAL.StockModel = mongoose.model('stocks', StockSchema);
 
 module.exports = {
-  UpdateUserStocks: function(req, res, next) {
+  UpdateUserStocks: function(req, res, next, message) {
     var bodyUserId = req.body.userId;
 
     if (bodyUserId == null) {
       res.send("userId is needed to update stocks");
     }
     else {
-      var promise = user.GetUserStocks(bodyUserId);
+      // var promise = user.GetUserStocks(bodyUserId);
+      var promise = GetUserStocks(bodyUserId);
       promise.then(function(users) {
         return users[0].stockAlerts;
       }).then(function(stockAlerts) {
@@ -43,15 +43,15 @@ module.exports = {
                 "currentStockPrice": "-1"
               });
           });
-          console.log(stockTickers);
-          StockModel.collection.insert(stockTickers, function(err) {
+          // console.log(stockTickers);
+          GLOBAL.StockModel.collection.insert(stockTickers, function(err) {
             if (!err) {
               console.log("Stocks added successfully");
-              res.send("Stocks added successfully");
+              sendResponse(res, "Stocks added successfully", message)
             }
             else {
               console.log(err); // Most like this was a duplicate error. Acceptable
-              res.send("Stocks already added");
+              sendResponse(res, "Stocks already added", message)
             }
           });
       })
@@ -76,7 +76,7 @@ module.exports = {
         });
         
         // Delete the stocks that have no user association
-        StockModel.find({}, function(err, stocks) {
+        GLOBAL.StockModel.find({}, function(err, stocks) {
           if (!err) {
             var dbStocks = [];
             stocks.forEach(function(stock) {
@@ -84,27 +84,27 @@ module.exports = {
             })
             
             var stocksToDelete = _.difference(dbStocks, uniqueStocks);
-            StockModel.find({ 'stockTickerSymbol': { $in: stocksToDelete} }, function(err, stocks){
+            GLOBAL.StockModel.find({ 'stockTickerSymbol': { $in: stocksToDelete} }, function(err, stocks){
               if (!err) {
                 console.log("Found stocks to delete");
               }
               else {
-                res.send(err);
+                sendResponse(res, err);
               }
             }).remove().exec(function() {
-              res.send("Deleted stocks");
+              sendResponse(res, "Deleted stocks");
             });
           }
           else {
             console.log(err); // Most like this was a duplicate error. Acceptable
-            res.send(err);
+            sendResponse(res, err);
           }
         });
     })
   },
-  
+
   GetAllMonitoredStocks: function(req, res, next) {
-    StockModel.find({}, function(err, stocks) {
+    GLOBAL.StockModel.find({}, function(err, stocks) {
       if (!err) {
         res.send(stocks);
         console.log("GET ALL STOCKS COMPLETED");
@@ -115,3 +115,24 @@ module.exports = {
     });
   }
 };
+
+function sendResponse(res, defaultMessage, specialMessage) {
+  if (specialMessage != null) {
+    res.send(specialMessage);
+  } 
+  else {
+    res.send(defaultMessage);
+  }
+}
+
+function GetAllUserStocks() {
+  // Gets all the stocks used by users
+  var promise = GLOBAL.UserModel.find({}).exec();
+  return promise;
+}
+
+function GetUserStocks(puserId) {
+  // Gets the stocks for a specific user
+  var promise = GLOBAL.UserModel.find({ userId: puserId }).exec();
+  return promise;
+}

@@ -1,6 +1,7 @@
 // user.js
 // =============
 var mongoose = require("mongoose");
+var stock = require('../model/stock.js');
 
 var UserSchema = new mongoose.Schema({
   userId: {
@@ -28,11 +29,11 @@ var UserSchema = new mongoose.Schema({
     "default": []
   }
 });
-var UserModel = mongoose.model('users', UserSchema);
+GLOBAL.UserModel = mongoose.model('users', UserSchema);
 
 module.exports = {
   GetUsers: function(req, res, next) {
-    UserModel.find({}, function(err, users) {
+    GLOBAL.UserModel.find({}, function(err, users) {
       if (!err) {
         res.send(users);
         console.log("GET USERS COMPLETED");
@@ -44,7 +45,7 @@ module.exports = {
   },
   
   GetUser: function(req, res, next) {
-    UserModel.find({ '_id': req.params.id}, function(err, users) {
+    GLOBAL.UserModel.find({ '_id': req.params.id}, function(err, users) {
       if (!err) {
         res.send(users)
         console.log("GET USER COMPLETED");
@@ -57,27 +58,27 @@ module.exports = {
 
   GetUserStocks: function(puserId) {
     // Gets the stocks for a specific user
-    var promise = UserModel.find({ userId: puserId }).exec();
+    var promise = GLOBAL.UserModel.find({ userId: puserId }).exec();
     return promise;
   },
   
   GetAllUserStocks: function() {
     // Gets all the stocks used by users
-    var promise = UserModel.find({}).exec();
+    var promise = GLOBAL.UserModel.find({}).exec();
     return promise;
   },
   
   PutUser: function(req, res, next) {
-    var newUser = new UserModel(req.body);
+    var newUser = new GLOBAL.UserModel(req.body);
     if (typeof(req.params.id) == "undefined") {
       // User key was not passed in. Try to save user as
       // a new user. Replace a matching record if it exists
       var upsertData = newUser.toObject();
       delete upsertData._id;
-      UserModel.findOneAndUpdate({ userId: newUser.userId }, upsertData, {upsert: true}, function(err) {
+      GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId }, upsertData, {upsert: true}, function(err) {
         if (!err) {
           console.log("New User created: " + newUser.userId);
-          res.send("PUT COMPLETED.");
+          stock.UpdateUserStocks(req, res, next, "PUT COMPLETED");
         }
         else {
           console.log(err);
@@ -91,10 +92,10 @@ module.exports = {
       console.log("This needs to be implemented...");
       var data = newUser.toObject();
       delete data._id;
-      UserModel.findByIdAndUpdate(req.params.id, data, {upsert: true}, function(err) {
+      GLOBAL.UserModel.findByIdAndUpdate(req.params.id, data, {upsert: true}, function(err) {
         if (!err) {
           console.log("New User created: " + newUser.userId);
-          res.send("PUT COMPLETED.");
+          stock.UpdateUserStocks(req, res, next, "PUT COMPLETED");
         }
         else {
           console.log(err);
@@ -104,7 +105,7 @@ module.exports = {
   },
   
   PostUser: function(req, res, next) {
-    var newUser = new UserModel(req.body);
+    var newUser = new GLOBAL.UserModel(req.body);
     var upsertData = newUser.toObject();
     delete upsertData._id;
     
@@ -113,7 +114,7 @@ module.exports = {
       res.send("Post did not update or add a user because of missing fields. The required fields are: userId, email, firstName, lastName");
     }
     
-    UserModel.findOneAndUpdate({ userId: newUser.userId, email: newUser.email }, upsertData, {upsert: true}, function(err) {
+    GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId, email: newUser.email }, upsertData, {upsert: true}, function(err) {
       if (!err) {
         res.send("POST COMPLETED");
       }
@@ -124,7 +125,7 @@ module.exports = {
   },
   
   DeleteUser: function(req, res, next) {
-    var user = new UserModel(req.body);
+    var user = new GLOBAL.UserModel(req.body);
     if (typeof(req.params.id) == "undefined" && user.userId == null)
     {
       res.send("Need id in url params or userId in request body in order to delete user");
@@ -134,7 +135,7 @@ module.exports = {
     if (typeof(req.params.id) != "undefined")
     {
       // Delete by id
-      UserModel.findByIdAndRemove(req.params.id, function(err) {
+      GLOBAL.UserModel.findByIdAndRemove(req.params.id, function(err) {
         if (!err) {
           res.send("DELETE COMPLETED");
           console.log("DELETE COMPLETED");
@@ -146,7 +147,7 @@ module.exports = {
     }
     else {
       // Delete by userId 
-      UserModel.findOneAndRemove({ userId: user.userId }, function(err) {
+      GLOBAL.UserModel.findOneAndRemove({ userId: user.userId }, function(err) {
         if (!err) {
           res.send("DELETE COMPLETED");
           console.log("DELETE COMPLETED");

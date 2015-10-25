@@ -39,7 +39,7 @@ router.post('/stock/', function(req, res, next) {
 });
 
 // DELETE call to clean up any stocks that arent monitored by users
-router.delete('/stock/', function(req, res, next) {
+router.delete('/stocks/', function(req, res, next) {
   stock.CleanUpStocks(req, res, next);
 });
 
