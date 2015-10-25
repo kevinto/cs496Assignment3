@@ -28,6 +28,11 @@ router.delete('/user/:id?', function(req, res, next) {
   user.DeleteUser(req, res, next);
 });
 
+// GET call to get all stocks monitored by the system
+router.get('/stocks/', function(req, res, next) {
+  stock.GetAllMonitoredStocks(req, res, next);
+});
+
 // POST call to update a specific users stocks
 router.post('/stock/', function(req, res, next) {
   stock.UpdateUserStocks(req, res, next);

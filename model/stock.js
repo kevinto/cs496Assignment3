@@ -99,5 +99,17 @@ module.exports = {
           }
         });
     })
+  },
+  
+  GetAllMonitoredStocks: function(req, res, next) {
+    StockModel.find({}, function(err, stocks) {
+      if (!err) {
+        res.send(stocks);
+        console.log("GET ALL STOCKS COMPLETED");
+      }
+      else {
+        console.log(err);
+      }
+    });
   }
 };
