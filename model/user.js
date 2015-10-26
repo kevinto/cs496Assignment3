@@ -61,6 +61,9 @@ module.exports = {
     if (typeof(req.params.id) == "undefined") {
       // User key was not passed in. Try to save user as
       // a new user. Replace a matching record if it exists
+      if (newUser.userId.length == 0) {
+        res.send("Need User Id"); 
+      }
       var upsertData = newUser.toObject();
       delete upsertData._id;
       GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId }, upsertData, {upsert: true}, function(err) {
@@ -76,8 +79,6 @@ module.exports = {
     else {
       // ID was passed in. Attempt to add or replace. Beware if you specify
       // an ID type that mongoose does not recognize, then there will be an error.
-      console.log("req.params.id: " + req.params.id);
-      console.log("This needs to be implemented...");
       var data = newUser.toObject();
       delete data._id;
       GLOBAL.UserModel.findByIdAndUpdate(req.params.id, data, {upsert: true}, function(err) {
@@ -134,6 +135,11 @@ module.exports = {
       });     
     }
     else {
+      if (user.userId.length == 0)
+      {
+        res.send("Need userId");
+      }
+      
       // Delete by userId 
       GLOBAL.UserModel.findOneAndRemove({ userId: user.userId }, function(err) {
         if (!err) {

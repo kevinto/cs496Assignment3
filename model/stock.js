@@ -24,8 +24,8 @@ GLOBAL.StockModel = mongoose.model('stocks', StockSchema);
 module.exports = {
   UpdateUserStocks: function(req, res, next, message) {
     var bodyUserId = req.body.userId;
-
-    if (bodyUserId == null) {
+  
+    if (bodyUserId == null || bodyUserId.length == 0) {
       res.send("userId is needed to update stocks");
     }
     else {
