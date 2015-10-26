@@ -63,6 +63,7 @@ module.exports = {
       // a new user. Replace a matching record if it exists
       if (newUser.userId.length == 0) {
         res.send("Need User Id"); 
+        return;
       }
       var upsertData = newUser.toObject();
       delete upsertData._id;
@@ -138,6 +139,7 @@ module.exports = {
       if (user.userId.length == 0)
       {
         res.send("Need userId");
+        return;
       }
       
       // Delete by userId 

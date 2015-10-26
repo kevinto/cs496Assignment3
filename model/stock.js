@@ -27,6 +27,7 @@ module.exports = {
   
     if (bodyUserId == null || bodyUserId.length == 0) {
       res.send("userId is needed to update stocks");
+      return;
     }
     else {
       var promise = GetUserStocks(bodyUserId);
