@@ -18,6 +18,11 @@ router.get('/user/:id', function(req, res, next) {
   user.GetUser(req, res, next);
 });
 
+// GET call to get user info by userId 
+router.get('/users/userid/:userid', function(req, res, next) {
+  user.GetUserByUserId(req, res, next);
+});
+
 // POST call to update or add a user without an ID
 router.post('/user', function(req, res, next) {
   user.PostUser(req, res, next);

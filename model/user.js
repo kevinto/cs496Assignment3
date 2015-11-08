@@ -56,6 +56,18 @@ module.exports = {
     })
   },
   
+  GetUserByUserId: function(req, res, next) {
+    GLOBAL.UserModel.find({ 'userId': req.params.userid}, function(err, users) {
+      if (!err) {
+        res.send(users)
+        console.log("GET USER COMPLETED");
+      }
+      else {
+        console.log(err);
+      }
+    })
+  },
+  
   PutUser: function(req, res, next) {
     var newUser = new GLOBAL.UserModel(req.body);
     if (typeof(req.params.id) == "undefined") {
