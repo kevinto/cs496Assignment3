@@ -114,6 +114,7 @@ module.exports = {
     if (newUser.userId == null || newUser.email == null || newUser.firstName == null || newUser.lastName == null)
     {
       res.send("Post did not update or add a user because of missing fields. The required fields are: userId, email, firstName, lastName");
+      return;
     }
     
     GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId, email: newUser.email }, upsertData, {upsert: true}, function(err) {
