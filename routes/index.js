@@ -3,6 +3,11 @@ var router = express.Router();
 var user = require('../model/user.js');
 var stock = require('../model/stock.js');
 
+// POST call to authenticate a user and return a token
+router.post('/login', function(req, res, next) {
+  user.Authenticate(req, res, next);
+});
+
 // GET call to get all users 
 router.get('/users', function(req, res, next) {
   user.GetUsers(req, res, next);

@@ -36,6 +36,10 @@ var UserSchema = new mongoose.Schema({
 GLOBAL.UserModel = mongoose.model('users', UserSchema);
 
 module.exports = {
+  Authenticate: function(req, res, next) {
+    res.send("Authenticate Successful");  
+  },
+  
   GetUsers: function(req, res, next) {
     GLOBAL.UserModel.find({}, function(err, users) {
       if (!err) {
