@@ -38,6 +38,7 @@ var UserSchema = new mongoose.Schema({
 GLOBAL.UserModel = mongoose.model('users', UserSchema);
 
 module.exports = {
+// Used calls for mobile app
   Authenticate: function(req, res, next) {
     var userInfo = new GLOBAL.UserModel(req.body);
     GLOBAL.UserModel.findOne({ 'userId': userInfo.userId}, function(err, user) {
@@ -113,18 +114,6 @@ module.exports = {
     });
   }, 
   
-  GetUsers: function(req, res, next) {
-    GLOBAL.UserModel.find({}, function(err, users) {
-      if (!err) {
-        res.send(users);
-        console.log("GET USERS COMPLETED");
-      }
-      else {
-        console.log(err);
-      }
-    });
-  },
-  
   GetUser: function(req, res, next) {
     var token = req.headers['x-access-token'];
     var decodedToken = jwt.decode(token);
@@ -143,6 +132,36 @@ module.exports = {
         }
       })  
     } 
+  },
+  
+  PostUser: function(req, res, next) {
+    var token = req.headers['x-access-token'];
+    var decodedToken = jwt.decode(token);
+    var newUser = new GLOBAL.UserModel(req.body);
+    var upsertData = newUser.toObject();
+    delete upsertData._id;
+    
+    GLOBAL.UserModel.findOneAndUpdate({ userId: decodedToken }, upsertData, {upsert: true}, function(err) {
+      if (!err) {
+        stock.UpdateUserStocks(req, res, next, "POST COMPLETED");
+      }
+      else {
+        console.log(err);
+      }
+    });
+  },
+  
+// Not Used 
+  GetUsers: function(req, res, next) {
+    GLOBAL.UserModel.find({}, function(err, users) {
+      if (!err) {
+        res.send(users);
+        console.log("GET USERS COMPLETED");
+      }
+      else {
+        console.log(err);
+      }
+    });
   },
   
   GetUserByUserId: function(req, res, next) {
@@ -193,27 +212,6 @@ module.exports = {
         }
       });
     }
-  },
-  
-  PostUser: function(req, res, next) {
-    var newUser = new GLOBAL.UserModel(req.body);
-    var upsertData = newUser.toObject();
-    delete upsertData._id;
-    
-    if (newUser.userId == null || newUser.email == null || newUser.firstName == null || newUser.lastName == null)
-    {
-      res.send("Post did not update or add a user because of missing fields. The required fields are: userId, email, firstName, lastName");
-      return;
-    }
-    
-    GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId, email: newUser.email }, upsertData, {upsert: true}, function(err) {
-      if (!err) {
-        stock.UpdateUserStocks(req, res, next, "POST COMPLETED");
-      }
-      else {
-        console.log(err);
-      }
-    });
   },
   
   DeleteUser: function(req, res, next) {

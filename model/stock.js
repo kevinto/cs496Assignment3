@@ -3,6 +3,7 @@
 var mongoose = require("mongoose");
 var _ = require("underscore-node");
 var user = require('../model/user.js');
+var jwt    = require('jsonwebtoken');
 
 var StockSchema = new mongoose.Schema({
   stockTickerSymbol: {
@@ -23,14 +24,15 @@ GLOBAL.StockModel = mongoose.model('stocks', StockSchema);
 
 module.exports = {
   UpdateUserStocks: function(req, res, next, message) {
-    var bodyUserId = req.body.userId;
-  
-    if (bodyUserId == null || bodyUserId.length == 0) {
+    var token = req.headers['x-access-token'];
+    var decodedToken = jwt.decode(token);
+    
+    if (decodedToken == null || decodedToken.length == 0) {
       res.send("userId is needed to update stocks");
       return;
     }
     else {
-      var promise = GetUserStocks(bodyUserId);
+      var promise = GetUserStocks(decodedToken);
       promise.then(function(users) {
         return users[0].stockAlerts;
       }).then(function(stockAlerts) {
@@ -43,14 +45,22 @@ module.exports = {
                 "currentStockPrice": "-1"
               });
           });
+          
           // console.log(stockTickers);
+          // Exit if no stock alerts
+          if (stockAlerts.length == 0) {
+            console.log("No Stocks to update");
+            sendResponse(res, "No Stocks to update", message);
+            return;
+          } 
+          
           GLOBAL.StockModel.collection.insert(stockTickers, function(err) {
             if (!err) {
               console.log("Stocks added successfully");
               sendResponse(res, "Stocks added successfully", message)
             }
             else {
-              console.log(err); // Most like this was a duplicate error. Acceptable
+              // console.log(err); // Most likely this was a duplicate error. Acceptable
               sendResponse(res, "Stocks already added", message)
             }
           });
