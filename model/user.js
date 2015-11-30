@@ -2,6 +2,8 @@
 // =============
 var mongoose = require("mongoose");
 var stock = require('../model/stock.js');
+var jwt    = require('jsonwebtoken');
+var app = require('../app');
 
 var UserSchema = new mongoose.Schema({
   userId: {
@@ -37,7 +39,37 @@ GLOBAL.UserModel = mongoose.model('users', UserSchema);
 
 module.exports = {
   Authenticate: function(req, res, next) {
-    res.send("Authenticate Successful");  
+    var userInfo = new GLOBAL.UserModel(req.body);
+    GLOBAL.UserModel.findOne({ 'userId': userInfo.userId}, function(err, user) {
+      if (err) {
+        console.log(err);
+      }
+      
+      if (!user) {
+        var message = 'Authentication failed. User not found.';
+        res.json({success: false, message: message})
+        console.log(message);
+      }
+      else if (user) {
+        if (user.password != userInfo.password) {
+          res.json({success: false, message: 'Authentication failed. Wrong password.'})
+        } 
+        else {
+          var token = jwt.sign(user, app.get('secret'), {
+            expiresIn: "24h" // expires in 24 hours
+            });
+          // var token = "hello";
+          
+          res.json({
+            success: true,
+            message: 'Enjoy your token!',
+            token: token
+          });
+        }
+      }
+    })
+    
+    // res.send("Authenticate Successful");
   },
   
   GetUsers: function(req, res, next) {

@@ -1,13 +1,13 @@
 var express = require('express');
+var app = module.exports = express();
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require('./config');
 
 var index = require('./routes/index');
 
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -73,5 +73,8 @@ mongoose.connect(uristring, function(err, res) {
     console.log('Succeeded connected to: ' + uristring);
   }
 });
+
+// Get our tokenizer string
+app.set('secret', config.secret); 
 
 module.exports = app;

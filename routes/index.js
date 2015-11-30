@@ -2,10 +2,49 @@ var express = require('express');
 var router = express.Router();
 var user = require('../model/user.js');
 var stock = require('../model/stock.js');
+var jwt    = require('jsonwebtoken');
+var app = require('../app');
 
-// POST call to authenticate a user and return a token
+// POST call to authenticate a user and return a token to be used
+// with all other calls
 router.post('/login', function(req, res, next) {
   user.Authenticate(req, res, next);
+});
+
+// Require all calls past this point to have user tokens to be able to access
+// the functionality
+router.use(function(req, res, next) {
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  
+  // decode token
+  if (token) {
+
+    // verifies secret and checks exp
+    jwt.verify(token, app.get('secret'), function(err, decoded) {
+      if (err) {
+        return res.json({
+          success: false,
+          message: 'Failed to authenticate token.'
+        });
+      }
+      else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded;
+        next();
+      }
+    });
+
+  }
+  else {
+
+    // if there is no token
+    // return an error
+    return res.status(403).send({
+      success: false,
+      message: 'No token provided.'
+    });
+
+  }
 });
 
 // GET call to get all users 
