@@ -96,7 +96,8 @@ module.exports = {
             var stocksToDelete = _.difference(dbStocks, uniqueStocks);
             GLOBAL.StockModel.find({ 'stockTickerSymbol': { $in: stocksToDelete} }, function(err, stocks){
               if (!err) {
-                console.log("Found stocks to delete");
+                // console.log("Found stocks to delete");
+                return;
               }
               else {
                 sendResponse(res, err);

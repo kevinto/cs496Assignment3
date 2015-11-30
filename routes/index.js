@@ -67,6 +67,11 @@ router.post('/user', function(req, res, next) {
   user.PostUser(req, res, next);
 });
 
+// USED
+router.delete('/user/stock/:id', function(req, res, next) {
+  user.DeleteStock(req, res, next);
+});
+
 // POST call to update a specific users stocks
 router.post('/stock/', function(req, res, next) {
   stock.UpdateUserStocks(req, res, next);

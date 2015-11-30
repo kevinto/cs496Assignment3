@@ -151,6 +151,24 @@ module.exports = {
     });
   },
   
+  DeleteStock: function(req, res, next) {
+    var token = req.headers['x-access-token'];
+    var decodedToken = jwt.decode(token);
+    var stockTicker = req.params.id.toUpperCase(); 
+    
+    // GLOBAL.UserModel.update({ 'userId': decodedToken }, { $pull: { 'stockAlerts': [{'stockTickerSymbol": stockTicker}] } }, function(err) {
+    GLOBAL.UserModel.update({ 'userId': decodedToken }, { $pull: { 'stockAlerts': {'stockTickerSymbol': stockTicker} } }, function(err) {
+      if (!err) {
+          // console.log("DELETE COMPLETED for " + stockTicker);
+          stock.CleanUpStocks(req, res, next, "DELETE COMPLETED");
+        }
+        else {
+          console.log(err);
+          res.send("delete error");
+        }
+      });     
+  },
+  
 // Not Used 
   GetUsers: function(req, res, next) {
     GLOBAL.UserModel.find({}, function(err, users) {
