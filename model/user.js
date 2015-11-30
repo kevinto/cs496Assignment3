@@ -43,34 +43,75 @@ module.exports = {
     GLOBAL.UserModel.findOne({ 'userId': userInfo.userId}, function(err, user) {
       if (err) {
         console.log(err);
+        res.json({success: false, message: err})
       }
       
       if (!user) {
         var message = 'Authentication failed. User not found.';
         res.json({success: false, message: message})
         console.log(message);
+        return;
       }
       else if (user) {
         if (user.password != userInfo.password) {
           res.json({success: false, message: 'Authentication failed. Wrong password.'})
         } 
         else {
-          var token = jwt.sign(user, app.get('secret'), {
-            expiresIn: "24h" // expires in 24 hours
-            });
-          // var token = "hello";
+          var token = jwt.sign(user.userId, app.get('secret'), {
+          expiresIn: "24h" // expires in 24 hours
+          });
+          
+          // For debugging 
+          // console.log("token: " + token);
+          // var decoded = jwt.decode(token);
+          // console.log("decodedtoken: " + decoded);
+          // res.json(decoded);
           
           res.json({
             success: true,
             message: 'Enjoy your token!',
             token: token
           });
+          return;
         }
       }
     })
     
     // res.send("Authenticate Successful");
   },
+  
+  Register: function(req, res, next) {
+    var newUser = new GLOBAL.UserModel(req.body);
+    
+    if (newUser.userId.length == 0) {
+      res.send("Need User Id"); 
+      return;
+    }
+    var upsertData = newUser.toObject();
+    delete upsertData._id;
+    GLOBAL.UserModel.findOneAndUpdate({ userId: newUser.userId }, upsertData, {upsert: true}, function(err) {
+      if (!err) {
+        var token = jwt.sign(newUser.userId, app.get('secret'), {
+        expiresIn: "24h" // expires in 24 hours
+        });
+        
+        // For debugging 
+        // console.log("token: " + token);
+        // var decoded = jwt.decode(token);
+        // console.log("decodedtoken: " + decoded);
+        
+        res.json({
+          success: true,
+          message: 'Enjoy your token!',
+          token: token
+        });
+        return;
+      }
+      else {
+        console.log(err);
+      }
+    });
+  }, 
   
   GetUsers: function(req, res, next) {
     GLOBAL.UserModel.find({}, function(err, users) {

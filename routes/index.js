@@ -11,6 +11,12 @@ router.post('/login', function(req, res, next) {
   user.Authenticate(req, res, next);
 });
 
+// POST call to authenticate a user and return a token to be used
+// with all other calls
+router.put('/register', function(req, res, next) {
+  user.Register(req, res, next);
+});
+
 // Require all calls past this point to have user tokens to be able to access
 // the functionality
 router.use(function(req, res, next) {
