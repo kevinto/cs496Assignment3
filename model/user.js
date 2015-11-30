@@ -126,15 +126,23 @@ module.exports = {
   },
   
   GetUser: function(req, res, next) {
-    GLOBAL.UserModel.find({ '_id': req.params.id}, function(err, users) {
-      if (!err) {
-        res.send(users)
-        console.log("GET USER COMPLETED");
-      }
-      else {
-        console.log(err);
-      }
-    })
+    var token = req.headers['x-access-token'];
+    var decodedToken = jwt.decode(token);
+    
+    if (!token) {
+      // Should never get there because a token check is done earlier than this
+      res.send("Get User Failed");
+    } else {
+      GLOBAL.UserModel.find({ 'userId': decodedToken }, function(err, users) {
+        if (!err) {
+          res.send(users)
+          console.log("GET USER COMPLETED");
+        }
+        else {
+          console.log(err);
+        }
+      })  
+    } 
   },
   
   GetUserByUserId: function(req, res, next) {

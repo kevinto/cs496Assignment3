@@ -5,12 +5,14 @@ var stock = require('../model/stock.js');
 var jwt    = require('jsonwebtoken');
 var app = require('../app');
 
+// USED
 // POST call to authenticate a user and return a token to be used
 // with all other calls
 router.post('/login', function(req, res, next) {
   user.Authenticate(req, res, next);
 });
 
+// USED
 // POST call to authenticate a user and return a token to be used
 // with all other calls
 router.put('/register', function(req, res, next) {
@@ -51,6 +53,12 @@ router.use(function(req, res, next) {
     });
 
   }
+});
+
+// USED
+// Get call to get a specific user with token support!
+router.get('/user', function(req, res, next) {
+  user.GetUser(req, res, next);
 });
 
 // GET call to get all users 
