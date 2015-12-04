@@ -110,6 +110,7 @@ module.exports = {
       }
       else {
         console.log(err);
+        res.send("Registration Error");
       }
     });
   }, 
@@ -143,6 +144,8 @@ module.exports = {
     
     GLOBAL.UserModel.findOneAndUpdate({ userId: decodedToken }, upsertData, {upsert: true}, function(err) {
       if (!err) {
+        // console.log(decodedToken);
+        // res.json(req.body);
         stock.UpdateUserStocks(req, res, next, "POST COMPLETED");
       }
       else {
